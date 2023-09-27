@@ -34,7 +34,7 @@ namespace QuizAPI.Controllers
                      Options = new string[] { x.Option1, x.Option2, x.Option3, x.Option4 }
                  })
                  .OrderBy(y => Guid.NewGuid())
-                 .Take(5)
+                 .Take(10)
                  ).ToListAsync();
             return Ok(randomxQns);
         }

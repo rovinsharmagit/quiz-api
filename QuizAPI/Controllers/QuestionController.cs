@@ -88,19 +88,24 @@ namespace QuizAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Question
+        // POST: api/Question/GetAnswers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Questions>> PostQuestions(Questions questions)
+        [Route("GetAnswers")]
+        public async Task<ActionResult<Questions>> RetrieveAnswers(int[] qnsId)
         {
-          if (_context.Questions == null)
-          {
-              return Problem("Entity set 'QuizDbContext.Questions'  is null.");
-          }
-            _context.Questions.Add(questions);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetQuestions", new { id = questions.QnId }, questions);
+            var answers = await (_context.Questions
+                  .Where(x => qnsId.Contains(x.QnId))
+                  .Select(y => new
+                  {
+                      QnId = y.QnId,
+                      QnInWords = y.QnInWords,
+                      ImageName = y.ImageName,
+                      Options = new string[] { y.Option1, y.Option2, y.Option3, y.Option4 },
+  
+                      Answer = y.Answer
+                  })).ToListAsync();
+            return Ok(answers);
         }
 
         // DELETE: api/Question/5

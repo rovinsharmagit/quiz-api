@@ -53,14 +53,27 @@ namespace QuizAPI.Controllers
         // PUT: api/Participant/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutParticipants(int id, Participants participants)
+        public async Task<IActionResult> PutParticipants(int id, ParticipantResult _participantResult)
         {
-            if (id != participants.ParticipantId)
+            if (id != _participantResult.ParticipantId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(participants).State = EntityState.Modified;
+             Participants? participant = _context.Participants.Find(id);
+             if (participant == null)
+              {
+                return NotFound();
+              }
+
+             if (participant != null)
+              {
+                participant.Score = _participantResult.Score;
+                participant.TimeTaken = _participantResult.TimeTaken;
+              }
+             
+
+              _context.Entry(participant!).State = EntityState.Modified;
 
             try
             {
